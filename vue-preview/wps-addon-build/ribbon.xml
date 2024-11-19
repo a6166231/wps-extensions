@@ -1,0 +1,16 @@
+<customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui" onLoad="ribbon.OnAddinLoad">
+    <ribbon startFromScratch="false">
+        <tabs>
+            <tab id="wpsAddinTab" label="扩展">
+                <group id="btnDemoGroup" label="游戏">
+                    <button id="btnShowHuoYuan" label="火源" onAction="ribbon.OnAction"
+                        getEnabled="ribbon.OnGetEnabled" getImage="ribbon.GetImage"
+                        size="large" />
+                    <button id="btnShowXueRen" label="雪人" onAction="ribbon.OnAction"
+                        getEnabled="ribbon.OnGetEnabled" getImage="ribbon.GetImage"
+                        size="large" />
+                </group>
+            </tab>
+        </tabs>
+    </ribbon>
+</customUI>
