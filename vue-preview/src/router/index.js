@@ -7,11 +7,6 @@ import {
 const router = createRouter({
     history: createWebHashHistory(''),
     routes: [{
-            path: '/',
-            name: '默认页',
-            component: () => import('../components/Root.vue')
-        },
-        {
             path: '/xueren',
             name: '雪人',
             component: () => import('../components/Preview.vue'),

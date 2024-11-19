@@ -56,7 +56,8 @@ export default {
             this.refreshResult = '刷新中...'
             preview.onSheetRefreshSelect().then(() => {
                 this.refreshResult = '刷新成功'
-            }).catch(() => {
+            }).catch((err) => {
+                console.log(err)
                 this.refreshResult = '刷新失败'
             })
         },

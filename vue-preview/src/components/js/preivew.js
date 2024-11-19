@@ -35,16 +35,11 @@ function OnGetData() {
     let fname = fullname.replace(new RegExp('\\\\', 'g'), '/')
 
     for (let data of previewData) {
-        if (data.url.indexOf(fname) == 0) {
+        if (fname.indexOf(data.fpath) == 0) {
             _formatData[fullname] = data
             return data
         }
     }
-    return previewData[0]
-}
-
-function getURL() {
-    return OnGetData().url
 }
 
 function getIp() {
@@ -64,20 +59,27 @@ function getCfgTypeRowIndex() {
 }
 
 function onSheetChangeCells(cells) {
-    return util.runGeneratorInFrames(preview.onChangeCells(cells))
+    if (OnGetData()) {
+        return util.runGeneratorInFrames(preview.onRefreshCells(cells))
+    } else {
+        return Promise.reject('刷新失败')
+    }
 }
 
 function onSheetRefreshSelect() {
-    return util.runGeneratorInFrames(preview.selectionRows())
+    return onSheetChangeCells(window.Application.Selection)
 }
 
-function postMessageToGame(cfgType, vData) {
+function postMessageToGame(vData) {
     let iframe = OnGetData().iframe
     if (!iframe || !iframe.contentWindow) return
     try {
         let message = {
             from: getExcelName(window.Application.ThisWorkbook.Name),
-            type: cfgType,
+            type: getExcelCfgType().reduce((r, v) => {
+                r.push(v.key)
+                return r
+            }, []),
             select: vData,
         }
         console.log('excel post message to game:', message)
@@ -176,73 +178,46 @@ class Preview {
         })
     }
 
-    * selectionRows() {
-        let rows = window.Application.Selection.Rows
-        let cells = window.Application.Cells
-        let cfgType = getExcelCfgType()
-        let vData = []
-
-        let type = cfgType.reduce((r, v) => {
-            r.push(v.key)
-            return r
-        }, [])
-
-        let keys = getExcelKeysByName(window.Application.ThisWorkbook.Name)
-
-        for (let i = 1; i <= rows.Count; i++) {
-            let item = rows.Item(i)
-            if (item.Row <= getCfgKeyRowIndex()) continue
-            let dataItem = {
-                keys: [],
-                val: []
-            }
-            for (let i = 0; i < cfgType.length; i++) {
-                let cfg = cfgType[i]
-                if (!cfg) continue
-                yield dataItem.val.push(cells.Item(item.Row, i + 1).Value())
-            }
-
-            for (let key in keys) {
-                let ktype = cfgType[key]
-                yield dataItem.keys.push(cells.Item(item.Row, ktype.index).Value())
-            }
-            vData.push(dataItem)
-        }
-        postMessageToGame(type, vData)
-    }
-
-    * onChangeCells(changeCells) {
+    * onRefreshCells(changeCells) {
         let vData = []
         let cfgType = getExcelCfgType()
-        let type = []
 
         let keys = getExcelKeysByName(window.Application.ThisWorkbook.Name)
         let cells = window.Application.Cells
 
-        for (let i = 1; i <= changeCells.Count; i++) {
-            let item = changeCells.Item(i)
+        let areas = changeCells.Areas
 
-            let dataItem = {
-                keys: [],
-                val: []
-            }
-            yield dataItem.val.push(item.Value())
-            type.push(cfgType[item.Column - 1].key)
-            vData.push(dataItem.val)
+        let rowMap = []
 
-            for (let key in keys) {
-                let ktype = cfgType[key]
-                yield dataItem.keys.push(cells.Item(item.Row, ktype.index).Value())
+        for (let i = 1; i <= areas.Count; i++) {
+            let area = areas.Item(i)
+            for (let j = 1; j <= area.Count; j++) {
+                let item = area.Item(j)
+                if (rowMap[item.Row]) continue
+                rowMap[item.Row] = item
+                let dataItem = {
+                    keys: [],
+                    val: []
+                }
+                for (let k = 0; k < cfgType.length; k++) {
+                    let cfg = cfgType[k]
+                    if (!cfg) continue
+                    yield dataItem.val.push(cells.Item(item.Row, k + 1).Value())
+                }
+                for (let key in keys) {
+                    let ktype = cfgType[keys[key]]
+                    yield dataItem.keys.push(cells.Item(item.Row, ktype.index).Value())
+                }
+                vData.push(dataItem)
             }
         }
-        postMessageToGame(type, vData)
+        postMessageToGame(vData)
     }
 }
 
 const preview = new Preview()
 
 export default {
-    getURL,
     getIp,
     getTable,
     onSheetChangeCells,
