@@ -34,6 +34,19 @@ function OnAction(control) {
             }
             break
         }
+        case "btnShowBaoXiang": {
+            let pid = window.Application.PluginStorage.getItem("preview_baoxiang")
+            if (!pid) {
+                let pane = window.Application.CreateTaskPane(Util.GetUrlPath() + Util.GetRouterHash() + "/baoxiang")
+                pane.name = 'preview_baoxiang'
+                window.Application.PluginStorage.setItem("preview_baoxiang", pane.ID)
+                pane.Visible = true
+            } else {
+                let pane = window.Application.GetTaskPane(pid)
+                pane.Visible = !pane.Visible
+            }
+            break
+        }
         case "btnShowXueRen": {
             let pid = window.Application.PluginStorage.getItem("preview_xueren")
             if (!pid) {
@@ -71,10 +84,31 @@ function OnGetEnabled(control) {
     return true
 }
 
+const cfgPath = window.Application.Env.GetTempPath() + "/wps-plugin-preview.json"
+
+function GetLocalTempCfgJson() {
+    if (window.Application.FileSystem.Exists(cfgPath)) {
+        let str = window.Application.FileSystem.ReadFile(cfgPath)
+        try {
+            return JSON.parse(str)
+        } catch (error) {
+            return {}
+        }
+    } else {
+        return {}
+    }
+}
+
+function SetLocalTempCfg(data) {
+    window.Application.FileSystem.WriteFile(cfgPath, JSON.stringify(data))
+}
+
 //这些函数是给wps客户端调用的
 export default {
     OnAddinLoad,
     OnAction,
     GetImage,
     OnGetEnabled,
+    GetLocalTempCfgJson,
+    SetLocalTempCfg,
 };

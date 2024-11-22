@@ -3,7 +3,7 @@ import util from './util';
 
 const previewData = [{
     url: `http://10.40.3.98/h5/game_super_power/index.html`,
-    fpath: 'E:/YSH5/乌木剑/H5Data',
+    // fpath: 'E:/YSH5/乌木剑/H5Data',
     name: '火源',
     ip: '10.40.3.98',
     view: {
@@ -11,9 +11,9 @@ const previewData = [{
         height: 640
     }
 }, {
-    url: `http://10.40.3.98/h5/snow/index.html`,
-    fpath: 'E:/YSH5/雪人/H5Data',
-    name: '雪人',
+    url: `http://10.40.3.98/h5/game_box/index.html`,
+    // fpath: 'E:/boxh5/H5Data',
+    name: '宝箱',
     ip: '10.40.3.98',
     view: {
         width: 640,
@@ -25,29 +25,26 @@ function getDataByIndex(index) {
     return previewData[index]
 }
 
-const _formatData = {}
+// const _formatData = {}
 
 function OnGetData() {
     let fullname = window.Application.ThisWorkbook.FullName
-    if (_formatData[fullname]) {
-        return _formatData[fullname]
-    }
     let fname = fullname.replace(new RegExp('\\\\', 'g'), '/')
 
     for (let data of previewData) {
+        if (!data.fpath) continue
         if (fname.indexOf(data.fpath) == 0) {
-            _formatData[fullname] = data
             return data
         }
     }
 }
 
 function getIp() {
-    return OnGetData().ip
+    return OnGetData()?.ip
 }
 
 function getFPath() {
-    return OnGetData().fpath
+    return OnGetData()?.fpath
 }
 
 function getCfgKeyRowIndex() {
@@ -62,7 +59,7 @@ function onSheetChangeCells(cells) {
     if (OnGetData()) {
         return util.runGeneratorInFrames(preview.onRefreshCells(cells))
     } else {
-        return Promise.reject('刷新失败')
+        return Promise.reject('当前excel路径和配置路径对不上，刷新失败！')
     }
 }
 
@@ -71,7 +68,7 @@ function onSheetRefreshSelect() {
 }
 
 function postMessageToGame(vData) {
-    let iframe = OnGetData().iframe
+    let iframe = OnGetData()?.iframe
     if (!iframe || !iframe.contentWindow) return
     try {
         let message = {
@@ -224,6 +221,5 @@ export default {
     onSheetRefreshSelect,
     getExcelKeysByName,
     getExcelCfgType,
-    OnGetData,
     getDataByIndex,
 }

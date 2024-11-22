@@ -6,7 +6,7 @@
                     <button id="btnShowHuoYuan" label="火源" onAction="ribbon.OnAction"
                         getEnabled="ribbon.OnGetEnabled" getImage="ribbon.GetImage"
                         size="large" />
-                    <button id="btnShowXueRen" label="雪人" onAction="ribbon.OnAction"
+                    <button id="btnShowBaoXiang" label="宝箱" onAction="ribbon.OnAction"
                         getEnabled="ribbon.OnGetEnabled" getImage="ribbon.GetImage"
                         size="large" />
                 </group>

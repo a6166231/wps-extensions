@@ -1,11 +1,14 @@
 <template>
     <div name="game" ref="gameContainer" class="game-container">
         <div>
+            <button @click="onRefreshView">刷新页面</button>
             <button @click="onSheetRefreshSelect">刷新选中行</button> <span>{{ refreshResult }}</span>
         </div>
-        <div>
-            <button @click="onRefreshView">刷新页面</button>
-            <span>{{ type }}</span>
+        <div style="display: flex;height: 25px;margin-top: 10px;">
+            <p>excel路径：</p>
+            <input v-bind:disabled="!changePpathStatus" type="text" ref="pathInput" :value="selectedFolder"
+                @blur="handleFileChange" @keyup.enter="handleFileChange">
+            <button @click="onChangePPath">修改路径</button>
         </div>
         <iframe ref="previewIframe" :src="src" class="iframe_full" @load="onIframeLoad"></iframe>
     </div>
@@ -15,6 +18,7 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import preview from './js/preivew'
+import ribbon from './ribbon';
 
 let viewdata
 
@@ -26,12 +30,42 @@ export default {
         return {
             src: '',
             refreshResult: "",
+            selectedFolder: this.getLocalPathStorage() || window.Application.FileSystem.absolutePath(window.Application.ThisWorkbook.FullName),
+            changePpathStatus: false,
         }
     },
     methods: {
         loadIframe() {
+            this.getLocalPathStorage()
             this.src = viewdata.url
             viewdata.iframe = this.$refs.previewIframe
+        },
+        getLocalPreviewTag() {
+            return 'preview_tag_' + this.type
+        },
+        onChangePPath() {
+            this.changePpathStatus = true
+        },
+        getLocalPathStorage() {
+            return ribbon.GetLocalTempCfgJson()[this.getLocalPreviewTag()]
+        },
+        setLocalPathStorage() {
+            let cfg = ribbon.GetLocalTempCfgJson()
+            cfg[this.getLocalPreviewTag()] = this.selectedFolder
+            ribbon.SetLocalTempCfg(cfg)
+            viewdata.fpath = this.selectedFolder
+            window.Application.PluginStorage.setItem("preview_tag_" + this.type, this.selectedFolder)
+        },
+        handleFileChange(event) {
+            if (!this.changePpathStatus) return
+            const value = event.target.value;
+            if (value.length > 0) {
+                this.selectedFolder = value
+            } else {
+                this.selectedFolder = window.Application.FileSystem.absolutePath(window.Application.ThisWorkbook.FullName)
+            }
+            this.setLocalPathStorage()
+            this.changePpathStatus = false
         },
         onIframeLoad() {
             this.adjustIframeScale()
@@ -41,7 +75,7 @@ export default {
             const container = this.$refs.gameContainer
 
             if (container && iframe) {
-                let scale = Math.min(container.clientWidth / viewdata.view.width, container.clientHeight / viewdata.view.height)
+                let scale = Math.min(container.clientWidth / viewdata.view.width, container.clientHeight / (viewdata.view.height / 0.88))
                 iframe.style.transform = `scale(${scale})`
             }
         },
@@ -57,8 +91,7 @@ export default {
             preview.onSheetRefreshSelect().then(() => {
                 this.refreshResult = '刷新成功'
             }).catch((err) => {
-                console.log(err)
-                this.refreshResult = '刷新失败'
+                this.refreshResult = err
             })
         },
         onRefreshView() {
@@ -67,6 +100,7 @@ export default {
     },
     mounted() {
         viewdata = preview.getDataByIndex(this.type)
+        viewdata.fpath = this.selectedFolder
 
         const iframeSrc = ref('')
         axios.get('/.debugTemp/NotifyDemoUrl').then((res) => {
@@ -76,6 +110,8 @@ export default {
 
         this.setCssVariables()
         this.loadIframe()
+
+        document.body.style.overflow = 'hidden'
         return {
             iframeSrc
         }
@@ -91,13 +127,13 @@ export default {
 .game-container {
     position: relative;
     width: 100%;
-    height: 95vh;
+    height: 100vh;
     overflow: hidden;
 }
 
 .iframe_full {
     position: absolute;
-    top: 50px;
+    top: 65px;
     left: 0;
     width: var(--viewwidth);
     height: var(--viewheight);
