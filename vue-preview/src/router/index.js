@@ -2,35 +2,30 @@ import {
     createRouter,
     createWebHashHistory
 } from 'vue-router'
-//import HomeView from '../views/HomeView.vue'
+
+import {
+    projectList
+} from '../cfg'
+
+const getRoutes = function () {
+    let list = []
+    for (let i = 0; i < projectList.length; i++) {
+        let item = projectList[i]
+        list.push({
+            path: '/preview_' + i,
+            name:  item.name,
+            component: () => import('../components/Preview.vue'),
+            props: {
+                type: i,
+            }
+        })
+    }
+    return list
+}
 
 const router = createRouter({
     history: createWebHashHistory(''),
-    routes: [{
-            path: '/huoyuan',
-            name: '火源',
-            component: () => import('../components/Preview.vue'),
-            props: {
-                type: 0,
-            }
-        },
-        {
-            path: '/baoxiang',
-            name: '宝箱',
-            component: () => import('../components/Preview.vue'),
-            props: {
-                type: 1,
-            }
-        },
-        {
-            path: '/xueren',
-            name: '雪人',
-            component: () => import('../components/Preview.vue'),
-            props: {
-                type: 2,
-            }
-        },
-    ]
+    routes: getRoutes()
 })
 
 export default router

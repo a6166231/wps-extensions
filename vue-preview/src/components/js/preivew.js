@@ -1,31 +1,17 @@
 import * as XLSX from 'xlsx';
 import util from './util';
 
-const previewData = [{
-    url: `http://10.40.3.98/h5/game_super_power/index.html`,
-    // fpath: 'E:/YSH5/乌木剑/H5Data',
-    name: '火源',
-    ip: '10.40.3.98',
-    view: {
-        width: 1136,
-        height: 640
-    }
-}, {
-    url: `http://10.40.3.98/h5/game_box/index.html`,
-    // fpath: 'E:/boxh5/H5Data',
-    name: '宝箱',
-    ip: '10.40.3.98',
-    view: {
-        width: 640,
-        height: 1136
-    }
-}]
+import {
+    projectList,
+    getCfgKeyRowIndex,
+    getCfgTypeRowIndex,
+} from '../../cfg'
+
+const previewData = projectList
 
 function getDataByIndex(index) {
     return previewData[index]
 }
-
-// const _formatData = {}
 
 function OnGetData() {
     let fullname = window.Application.ThisWorkbook.FullName
@@ -40,19 +26,21 @@ function OnGetData() {
 }
 
 function getIp() {
-    return OnGetData()?.ip
+    let item = OnGetData()
+    if (item && item.url) {
+        const ipRegex = /\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b/;
+        const match = item.url.match(ipRegex);
+        if (match && match.length) {
+            return match[0]
+        }
+    }
 }
 
 function getFPath() {
-    return OnGetData()?.fpath
-}
-
-function getCfgKeyRowIndex() {
-    return 4;
-}
-
-function getCfgTypeRowIndex() {
-    return 3;
+    let item = OnGetData()
+    if (item) {
+        return item.fpath
+    }
 }
 
 function onSheetChangeCells(cells) {
@@ -68,7 +56,8 @@ function onSheetRefreshSelect() {
 }
 
 function postMessageToGame(vData) {
-    let iframe = OnGetData()?.iframe
+    let item = OnGetData()
+    let iframe = item && item.iframe
     if (!iframe || !iframe.contentWindow) return
     try {
         let message = {

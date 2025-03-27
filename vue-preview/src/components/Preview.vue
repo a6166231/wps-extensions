@@ -39,6 +39,7 @@ export default {
             this.getLocalPathStorage()
             this.src = viewdata.url
             viewdata.iframe = this.$refs.previewIframe
+            window['preview_frame'] = viewdata.iframe
         },
         getLocalPreviewTag() {
             return 'preview_tag_' + this.type

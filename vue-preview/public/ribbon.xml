@@ -3,11 +3,21 @@
         <tabs>
             <tab id="wpsAddinTab" label="扩展">
                 <group id="btnDemoGroup" label="游戏">
-                    <button id="btnShowHuoYuan" label="火源" onAction="ribbon.OnAction"
-                        getEnabled="ribbon.OnGetEnabled" getImage="ribbon.GetImage"
+                    <!-- 因为xml文件无法动态生成 所以这里提前放一堆按钮  走代码的动态隐藏 -->
+                    <button id="0" getLabel="ribbon.onGetBtnLb" onAction="ribbon.OnAction"
+                        getVisible="ribbon.OnGetVisible" getImage="ribbon.GetImage"
                         size="large" />
-                    <button id="btnShowBaoXiang" label="宝箱" onAction="ribbon.OnAction"
-                        getEnabled="ribbon.OnGetEnabled" getImage="ribbon.GetImage"
+                    <button id="1" getLabel="ribbon.onGetBtnLb" onAction="ribbon.OnAction"
+                        getVisible="ribbon.OnGetVisible" getImage="ribbon.GetImage"
+                        size="large" />
+                    <button id="2" getLabel="ribbon.onGetBtnLb" onAction="ribbon.OnAction"
+                        getVisible="ribbon.OnGetVisible" getImage="ribbon.GetImage"
+                        size="large" />
+                    <button id="3" getLabel="ribbon.onGetBtnLb" onAction="ribbon.OnAction"
+                        getVisible="ribbon.OnGetVisible" getImage="ribbon.GetImage"
+                        size="large" />
+                    <button id="4" getLabel="ribbon.onGetBtnLb" onAction="ribbon.OnAction"
+                        getVisible="ribbon.OnGetVisible" getImage="ribbon.GetImage"
                         size="large" />
                 </group>
             </tab>

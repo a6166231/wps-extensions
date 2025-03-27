@@ -1,5 +1,7 @@
 import Util from './js/util.js'
-import SystemDemo from './js/systemdemo.js'
+import {
+    projectList
+} from '../cfg.js'
 
 function OnAddinLoad(ribbonUI) {
     if (typeof (window.Application.ribbonUI) != "object") {
@@ -9,58 +11,30 @@ function OnAddinLoad(ribbonUI) {
     if (typeof (window.Application.Enum) != "object") { // 如果没有内置枚举值
         window.Application.Enum = Util.WPS_Enum
     }
-    //这几个导出函数是给外部业务系统调用的
-    window.openOfficeFileFromSystemDemo = SystemDemo.openOfficeFileFromSystemDemo
-    window.InvokeFromSystemDemo = SystemDemo.InvokeFromSystemDemo
-
-    window.Application.PluginStorage.setItem("EnableFlag", false) //往PluginStorage中设置一个标记，用于控制两个按钮的置灰
-    window.Application.PluginStorage.setItem("ApiEventFlag", false) //往PluginStorage中设置一个标记，用于控制ApiEvent的按钮label
     return true
 }
 
 function OnAction(control) {
     const eleId = control.Id
+    const index = Number(eleId)
     switch (eleId) {
-        case "btnShowHuoYuan": {
-            let pid = window.Application.PluginStorage.getItem("preview_huoyuan")
-            if (!pid) {
-                let pane = window.Application.CreateTaskPane(Util.GetUrlPath() + Util.GetRouterHash() + "/huoyuan")
-                pane.name = 'preview_huoyuan'
-                window.Application.PluginStorage.setItem("preview_huoyuan", pane.ID)
-                pane.Visible = true
-            } else {
-                let pane = window.Application.GetTaskPane(pid)
-                pane.Visible = !pane.Visible
-            }
-            break
-        }
-        case "btnShowBaoXiang": {
-            let pid = window.Application.PluginStorage.getItem("preview_baoxiang")
-            if (!pid) {
-                let pane = window.Application.CreateTaskPane(Util.GetUrlPath() + Util.GetRouterHash() + "/baoxiang")
-                pane.name = 'preview_baoxiang'
-                window.Application.PluginStorage.setItem("preview_baoxiang", pane.ID)
-                pane.Visible = true
-            } else {
-                let pane = window.Application.GetTaskPane(pid)
-                pane.Visible = !pane.Visible
-            }
-            break
-        }
-        case "btnShowXueRen": {
-            let pid = window.Application.PluginStorage.getItem("preview_xueren")
-            if (!pid) {
-                let pane = window.Application.CreateTaskPane(Util.GetUrlPath() + Util.GetRouterHash() + "/xueren")
-                pane.name = 'preview_xueren'
-                window.Application.PluginStorage.setItem("preview_xueren", pane.ID)
-                pane.Visible = true
-            } else {
-                let pane = window.Application.GetTaskPane(pid)
-                pane.Visible = !pane.Visible
-            }
-            break
-        }
         default:
+            if (!isNaN(index)) {
+                let item = projectList[eleId]
+                if (item) {
+                    let _name = `preview_${index}`
+                    let pid = window.Application.PluginStorage.getItem(_name)
+                    if (!pid) {
+                        let pane = window.Application.CreateTaskPane(Util.GetUrlPath() + Util.GetRouterHash() + "/" + _name)
+                        pane.name = _name
+                        window.Application.PluginStorage.setItem(_name, pane.ID)
+                        pane.Visible = true
+                    } else {
+                        let pane = window.Application.GetTaskPane(pid)
+                        pane.Visible = !pane.Visible
+                    }
+                }
+            }
             break
     }
     return true
@@ -75,13 +49,32 @@ function GetImage(control) {
     return "images/newFromTemp.svg"
 }
 
-function OnGetEnabled(control) {
+function OnGetVisible(control) {
     const eleId = control.Id
+    const index = Number(eleId)
     switch (eleId) {
         default:
+            if (!isNaN(index)) {
+                let item = projectList[eleId]
+                return Boolean(item)
+            }
             break
     }
     return true
+}
+
+function onGetBtnLb(control) {
+    const eleId = control.Id
+    const index = Number(eleId)
+    switch (eleId) {
+        default:
+            if (!isNaN(index)) {
+                let item = projectList[eleId]
+                return item && item.name || "?"
+            }
+            break
+    }
+    return '?'
 }
 
 const cfgPath = window.Application.Env.GetTempPath() + "/wps-plugin-preview.json"
@@ -107,8 +100,9 @@ function SetLocalTempCfg(data) {
 export default {
     OnAddinLoad,
     OnAction,
+    onGetBtnLb,
     GetImage,
-    OnGetEnabled,
+    OnGetVisible,
     GetLocalTempCfgJson,
     SetLocalTempCfg,
 };
