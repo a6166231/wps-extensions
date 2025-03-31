@@ -1,4 +1,5 @@
-let projectList = [{
+import Util from './components/js/util'
+let _projectList = [{
     url: "http://10.40.3.98/h5/game_super_power/index.html",
     name: "火源",
     view: {
@@ -21,6 +22,22 @@ let projectList = [{
     }
 }]
 
+function getLocalProjectCfgJson() {
+    let list = Util.GetLocalCfgJson(window.Application.Env.GetTempPath() + "/wps-plugin-preview-project.json")
+    if (list && list.length > 0) {
+        return list
+    }
+    return _projectList
+}
+
+function SetLocalProjectTempCfg(data) {
+    return Util.SetLocalCfgByStr(window.Application.Env.GetTempPath() + "/wps-plugin-preview-project.json", data)
+}
+
+function GetProjectList(){
+    return getLocalProjectCfgJson()
+}
+
 function getCfgKeyRowIndex() {
     return 4;
 }
@@ -30,7 +47,9 @@ function getCfgTypeRowIndex() {
 }
 
 export {
-    projectList,
+    GetProjectList,
     getCfgKeyRowIndex,
     getCfgTypeRowIndex,
+    getLocalProjectCfgJson,
+    SetLocalProjectTempCfg,
 }

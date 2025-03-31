@@ -1,6 +1,6 @@
 import Util from './js/util.js'
 import {
-    projectList
+    GetProjectList
 } from '../cfg.js'
 
 function OnAddinLoad(ribbonUI) {
@@ -17,10 +17,14 @@ function OnAddinLoad(ribbonUI) {
 function OnAction(control) {
     const eleId = control.Id
     const index = Number(eleId)
+    console.log(eleId)
     switch (eleId) {
+        case "btnShowCfgPanel":
+            window.Application.ShowDialog(Util.GetUrlPath() + Util.GetRouterHash() + "/ProjectList", "项目配置管理", 1000, 600)
+            break
         default:
             if (!isNaN(index)) {
-                let item = projectList[eleId]
+                let item = GetProjectList()[eleId]
                 if (item) {
                     let _name = `preview_${index}`
                     let pid = window.Application.PluginStorage.getItem(_name)
@@ -43,6 +47,8 @@ function OnAction(control) {
 function GetImage(control) {
     const eleId = control.Id
     switch (eleId) {
+        case "btnShowCfgPanel":
+            return "images/1.svg"
         default:
             break
     }
@@ -55,7 +61,7 @@ function OnGetVisible(control) {
     switch (eleId) {
         default:
             if (!isNaN(index)) {
-                let item = projectList[eleId]
+                let item = GetProjectList()[eleId]
                 return Boolean(item)
             }
             break
@@ -69,7 +75,7 @@ function onGetBtnLb(control) {
     switch (eleId) {
         default:
             if (!isNaN(index)) {
-                let item = projectList[eleId]
+                let item = GetProjectList()[eleId]
                 return item && item.name || "?"
             }
             break
@@ -80,20 +86,11 @@ function onGetBtnLb(control) {
 const cfgPath = window.Application.Env.GetTempPath() + "/wps-plugin-preview.json"
 
 function GetLocalTempCfgJson() {
-    if (window.Application.FileSystem.Exists(cfgPath)) {
-        let str = window.Application.FileSystem.ReadFile(cfgPath)
-        try {
-            return JSON.parse(str)
-        } catch (error) {
-            return {}
-        }
-    } else {
-        return {}
-    }
+    return Util.GetLocalCfgJson(cfgPath) || {}
 }
 
 function SetLocalTempCfg(data) {
-    window.Application.FileSystem.WriteFile(cfgPath, JSON.stringify(data))
+    return Util.SetLocalCfgByStr(cfgPath, data)
 }
 
 //这些函数是给wps客户端调用的

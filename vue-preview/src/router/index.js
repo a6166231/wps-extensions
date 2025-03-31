@@ -3,17 +3,12 @@ import {
     createWebHashHistory
 } from 'vue-router'
 
-import {
-    projectList
-} from '../cfg'
-
 const getRoutes = function () {
     let list = []
-    for (let i = 0; i < projectList.length; i++) {
-        let item = projectList[i]
+    for (let i = 0; i < 99; i++) {
         list.push({
             path: '/preview_' + i,
-            name:  item.name,
+            name: '/preview_' + i,
             component: () => import('../components/Preview.vue'),
             props: {
                 type: i,
@@ -25,7 +20,13 @@ const getRoutes = function () {
 
 const router = createRouter({
     history: createWebHashHistory(''),
-    routes: getRoutes()
+    routes: [{
+            path: '/ProjectList',
+            name: 'ProjectList',
+            component: () => import('../components/ProjectList.vue'),
+        },
+        ...getRoutes()
+    ]
 })
 
 export default router

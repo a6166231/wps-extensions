@@ -2,22 +2,20 @@ import * as XLSX from 'xlsx';
 import util from './util';
 
 import {
-    projectList,
+    GetProjectList,
     getCfgKeyRowIndex,
     getCfgTypeRowIndex,
 } from '../../cfg'
 
-const previewData = projectList
-
 function getDataByIndex(index) {
-    return previewData[index]
+    return GetProjectList()[index]
 }
 
 function OnGetData() {
     let fullname = window.Application.ThisWorkbook.FullName
     let fname = fullname.replace(new RegExp('\\\\', 'g'), '/')
 
-    for (let data of previewData) {
+    for (let data of GetProjectList()) {
         if (!data.fpath) continue
         if (fname.indexOf(data.fpath) == 0) {
             return data

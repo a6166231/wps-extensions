@@ -53,8 +53,25 @@ function runGeneratorInFrames(generator, timestep = 16) {
             console.error(error)
             reject(false)
         }
-
     })
+}
+
+
+function GetLocalCfgJson(ppath) {
+    if (window.Application.FileSystem.Exists(ppath)) {
+        let str = window.Application.FileSystem.ReadFile(ppath)
+        try {
+            return JSON.parse(str)
+        } catch (error) {
+            return
+        }
+    } else {
+        return
+    }
+}
+
+function SetLocalCfgByStr(ppath, data) {
+    window.Application.FileSystem.WriteFile(ppath, JSON.stringify(data))
 }
 
 export default {
@@ -62,4 +79,6 @@ export default {
     GetUrlPath,
     GetRouterHash,
     runGeneratorInFrames,
+    SetLocalCfgByStr,
+    GetLocalCfgJson,
 }

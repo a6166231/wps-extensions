@@ -2,7 +2,11 @@
     <ribbon startFromScratch="false">
         <tabs>
             <tab id="wpsAddinTab" label="扩展">
-                <group id="btnDemoGroup" label="游戏">
+                <group id="btnCfgGroup" label="配置">
+                    <button id="btnShowCfgPanel" label="项目设置" getImage="ribbon.GetImage"
+                        onAction="ribbon.OnAction" size="large" />
+                </group>
+                <group id="btnGameGroup" label="游戏">
                     <!-- 因为xml文件无法动态生成 所以这里提前放一堆按钮  走代码的动态隐藏 -->
                     <button id="0" getLabel="ribbon.onGetBtnLb" onAction="ribbon.OnAction"
                         getVisible="ribbon.OnGetVisible" getImage="ribbon.GetImage"
@@ -17,6 +21,24 @@
                         getVisible="ribbon.OnGetVisible" getImage="ribbon.GetImage"
                         size="large" />
                     <button id="4" getLabel="ribbon.onGetBtnLb" onAction="ribbon.OnAction"
+                        getVisible="ribbon.OnGetVisible" getImage="ribbon.GetImage"
+                        size="large" />
+                    <button id="5" getLabel="ribbon.onGetBtnLb" onAction="ribbon.OnAction"
+                        getVisible="ribbon.OnGetVisible" getImage="ribbon.GetImage"
+                        size="large" />
+                    <button id="6" getLabel="ribbon.onGetBtnLb" onAction="ribbon.OnAction"
+                        getVisible="ribbon.OnGetVisible" getImage="ribbon.GetImage"
+                        size="large" />
+                    <button id="7" getLabel="ribbon.onGetBtnLb" onAction="ribbon.OnAction"
+                        getVisible="ribbon.OnGetVisible" getImage="ribbon.GetImage"
+                        size="large" />
+                    <button id="8" getLabel="ribbon.onGetBtnLb" onAction="ribbon.OnAction"
+                        getVisible="ribbon.OnGetVisible" getImage="ribbon.GetImage"
+                        size="large" />
+                    <button id="9" getLabel="ribbon.onGetBtnLb" onAction="ribbon.OnAction"
+                        getVisible="ribbon.OnGetVisible" getImage="ribbon.GetImage"
+                        size="large" />
+                    <button id="10" getLabel="ribbon.onGetBtnLb" onAction="ribbon.OnAction"
                         getVisible="ribbon.OnGetVisible" getImage="ribbon.GetImage"
                         size="large" />
                 </group>
