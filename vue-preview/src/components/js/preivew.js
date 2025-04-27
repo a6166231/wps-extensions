@@ -54,9 +54,6 @@ function onSheetRefreshSelect() {
 }
 
 function postMessageToGame(vData) {
-    let item = OnGetData()
-    let iframe = item && item.iframe
-    if (!iframe || !iframe.contentWindow) return
     try {
         let message = {
             from: getExcelName(window.Application.ThisWorkbook.Name),
@@ -69,7 +66,7 @@ function postMessageToGame(vData) {
         console.log('excel post message to game:', message)
 
         let sjson = JSON.stringify(message)
-        iframe.contentWindow.postMessage(`${sjson}`, `http://${getIp()}`)
+        window.postMessage(`${sjson}`, `http://${getIp()}`)
     } catch (error) {
         console.error(error)
     }

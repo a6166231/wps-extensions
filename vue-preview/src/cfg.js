@@ -25,16 +25,21 @@ let _projectList = [{
 function getLocalProjectCfgJson() {
     let list = Util.GetLocalCfgJson(window.Application.Env.GetTempPath() + "/wps-plugin-preview-project.json")
     if (list && list.length > 0) {
-        return list
+        _projectList = list
     }
     return _projectList
 }
 
 function SetLocalProjectTempCfg(data) {
+    if (!data) {
+        data = _projectList
+    } else {
+        _projectList = data
+    }
     return Util.SetLocalCfgByStr(window.Application.Env.GetTempPath() + "/wps-plugin-preview-project.json", data)
 }
 
-function GetProjectList(){
+function GetProjectList() {
     return getLocalProjectCfgJson()
 }
 

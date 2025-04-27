@@ -1,6 +1,6 @@
 <template>
-    <div name="game" ref="gameContainer" class="game-container">
-        <div>
+    <div name="game-preview" ref="gameContainer" class="game-container">
+        <div style="display: flex;height: 25px;margin-top: 0px;">
             <button @click="onRefreshView">刷新页面</button>
             <button @click="onSheetRefreshSelect">刷新选中行</button> <span>{{ refreshResult }}</span>
         </div>
@@ -19,6 +19,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import preview from './js/preivew'
 import ribbon from './ribbon';
+import { SetLocalProjectTempCfg } from '../cfg.js';
 
 let viewdata
 
@@ -39,6 +40,7 @@ export default {
             this.getLocalPathStorage()
             this.src = viewdata.url
             viewdata.iframe = this.$refs.previewIframe
+            SetLocalProjectTempCfg();
             window['preview_frame'] = viewdata.iframe
         },
         getLocalPreviewTag() {
@@ -55,6 +57,7 @@ export default {
             cfg[this.getLocalPreviewTag()] = this.selectedFolder
             ribbon.SetLocalTempCfg(cfg)
             viewdata.fpath = this.selectedFolder
+            SetLocalProjectTempCfg();
             window.Application.PluginStorage.setItem("preview_tag_" + this.type, this.selectedFolder)
         },
         handleFileChange(event) {
@@ -84,8 +87,8 @@ export default {
             this.adjustIframeScale()
         },
         setCssVariables() {
-            document.documentElement.style.setProperty('--viewwidth', `${viewdata.view.width}px`)
-            document.documentElement.style.setProperty('--viewheight', `${viewdata.view.height}px`)
+            document.documentElement.style.setProperty('--viewwidth', `${viewdata.view.width*0.95}px`)
+            document.documentElement.style.setProperty('--viewheight', `${viewdata.view.height*0.95}px`)
         },
         onSheetRefreshSelect() {
             this.refreshResult = '刷新中...'
@@ -95,6 +98,11 @@ export default {
                 this.refreshResult = err
             })
         },
+        handleKeyUp(val) {
+            if(val.key === 'F5') {
+                this.onRefreshView()
+            }
+        },
         onRefreshView() {
             window.location.reload()
         }
@@ -102,12 +110,14 @@ export default {
     mounted() {
         viewdata = preview.getDataByIndex(this.type)
         viewdata.fpath = this.selectedFolder
+        SetLocalProjectTempCfg();
 
         const iframeSrc = ref('')
         axios.get('/.debugTemp/NotifyDemoUrl').then((res) => {
             this.DemoSpan = res.data
         })
         window.addEventListener('resize', this.handleResize)
+        window.addEventListener('keyup', this.handleKeyUp)
 
         this.setCssVariables()
         this.loadIframe()
@@ -119,6 +129,7 @@ export default {
     },
     onBeforeUnmount() {
         window.removeEventListener('resize', this.handleResize)
+        window.removeEventListener('keyup', this.handleKeyUp)
     }
 }
 
@@ -126,8 +137,8 @@ export default {
 
 <style scoped>
 .game-container {
-    position: relative;
-    width: 100%;
+    position: absolute;
+    width: 95%;
     height: 100vh;
     overflow: hidden;
 }
