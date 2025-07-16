@@ -13,6 +13,8 @@
 
 多表的模板链接展示
 
+https://github.com/user-attachments/assets/00c923e1-acd0-4548-b475-d1bcc350c15c
+
 - 自定义模板脚本，动态外部导入，修改之后一键重载
 - excel多列选择需要的模板
 - 选中已链接模板的单元格，会弹出对应的模板预览
