@@ -27,15 +27,24 @@ function attribute(str) {
         if (arr.length == 1) {
             let attrObj = attributeStrFormat(arr[0])
             let attrList = attributeValFrmat(attrObj, cfgs)
-            result.push(`${attrList.join('\n')}`)
-        } else if(arr.length == 3){
+
+            let s = ""
+            attrList.forEach(v => {
+                s += '&nbsp;'.repeat(4) + v + '\n'
+            })
+            result.push(`${s}`)
+        } else if (arr.length == 3) {
             let job = ["战", "法", "道"]
             for (let i = 0; i < arr.length; i++) {
 
                 let attrObj = attributeStrFormat(arr[i])
                 let attrList = attributeValFrmat(attrObj, cfgs)
 
-                result.push(`${job[i]} :\n${attrList.join('    \n')}`)
+                let s = ""
+                attrList.forEach(v => {
+                    s += '&nbsp;'.repeat(4) + v + '\n'
+                })
+                result.push(`${job[i]} :\n${s}`)
             }
         }
         return result.join('\n')
