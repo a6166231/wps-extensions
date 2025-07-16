@@ -42,6 +42,17 @@
                         getVisible="ribbon.OnGetVisible" getImage="ribbon.GetImage"
                         size="large" />
                 </group>
+                <group id="btnGameGroup" label="模板配置">
+                    <button id="template-lock" getLabel="ribbon.onGetBtnLb" onAction="ribbon.OnAction"
+                        getImage="ribbon.GetImage"
+                        size="large" />
+                    <button id="template-link" getLabel="ribbon.onGetBtnLb" onAction="ribbon.OnAction"
+                        getImage="ribbon.GetImage"
+                        size="large" />
+                    <button id="script-reimport" getLabel="ribbon.onGetBtnLb" onAction="ribbon.OnAction"
+                        getImage="ribbon.GetImage"
+                        size="large" />
+                </group>
             </tab>
         </tabs>
     </ribbon>

@@ -21,11 +21,21 @@ const getRoutes = function () {
 const router = createRouter({
     history: createWebHashHistory(''),
     routes: [{
-            path: '/ProjectList',
-            name: 'ProjectList',
-            component: () => import('../components/ProjectList.vue'),
-        },
-        ...getRoutes()
+        path: '/ProjectList',
+        name: 'ProjectList',
+        component: () => import('../components/ProjectList.vue'),
+    },
+    {
+        path: '/TemplateLink',
+        name: 'TemplateLink',
+        component: () => import('../components/TemplateLink.vue'),
+    },
+    {
+        path: '/template-item-preview',
+        name: 'template-item-preview',
+        component: () => import('../components/TemplateItemPreview.vue'),
+    },
+    ...getRoutes()
     ]
 })
 

@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx';
+// import * as XLSX from 'xlsx';
 import util from './util';
 
 import {
@@ -99,22 +99,28 @@ function getTable() {
     if (!tableJson) {
         tableJson = {}
         try {
-            const workbook = XLSX.read(window.Application.FileSystem.ReadFileAsArrayBuffer(`${getFPath()}/tables.xls`), {
-                type: 'binary'
-            })
-            const sheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[sheetName];
-            const json = XLSX.utils.sheet_to_json(worksheet, {
-                header: 0
-            });
+            // let workbook;
+            // let fpath = `${getFPath()}/tables.csv`
 
+            // if (util.fileExists(fpath)) {
+            //     workbook = XLSX.read(window.Application.FileSystem.ReadFileAsArrayBuffer(fpath), {
+            //         type: 'binary'
+            //     })
+            // } else {
+            //     fpath = `${getFPath()}/tables.xls`
+            //     workbook = XLSX.read(window.Application.FileSystem.ReadFileAsArrayBuffer(fpath), {
+            //         type: 'binary'
+            //     })
+            // }
+            // const sheetName = workbook.SheetNames[0];
+            // const worksheet = workbook.Sheets[sheetName];
+            const json = util.tryReadEXCELJSON(`${getFPath()}/tables`)
             for (let item of json) {
                 tableJson[item.name] = item
             }
         } catch (error) {
             console.error(error)
         }
-
     }
     return tableJson
 }
