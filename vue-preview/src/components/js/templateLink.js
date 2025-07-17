@@ -17,10 +17,15 @@ let scriptImport = function () {
         window.scriptMap = {}
         try {
             let dirfile = window.Application.FileSystem.readdirSync(spath)
-
             for (let fpath of dirfile) {
-                let ff = window.Application.FileSystem.ReadFile(spath + '/' + fpath)
-                eval(ff)
+                if (fpath.endsWith('.js')) {
+                    try {
+                        let ff = window.Application.FileSystem.ReadFile(spath + '/' + fpath)
+                        eval(ff)
+                    } catch (error) {
+                        console.log('加载js失败：', fpath, error)
+                    }
+                }
             }
         } catch (error) {
             console.warn('加载本地模板脚本失败：', error)
